@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="dashboard-grid">
+    
+    <section class="card balance-card">
+        <div class="card-header">
+            <h3>Your Current Balance</h3>
+        </div>
+        <div class="balance-details">
+            <span class="currency">₹</span>
+            <span class="amount">12,540.50</span>
+            <div class="account-info">
+                <span class="label">Account Holder:</span>
+                <span class="value">Sumit Kumar Sahoo</span>
+            </div>
+            <div class="account-info">
+                <span class="label">Account Number:</span>
+                <span class="value">**** **** 0696</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card quick-actions">
+        <div class="card-header">
+            <h3>Quick Actions</h3>
+        </div>
+        <div class="action-buttons">
+            <a href="{{ url_for('deposit') }}" class="action-btn deposit">
+                <span class="icon"><i class="bi bi-box-arrow-in-down"></i></span>
+                <span>Deposit</span>
+            </a>
+            <a href="{{ url_for('withdraw') }}" class="action-btn withdraw">
+                <span class="icon"><i class="bi bi-box-arrow-up"></i></span>
+                <span>Withdraw</span>
+            </a>
+            <a href="#" class="action-btn transfer">
+                <span class="icon"><i class="bi bi-arrow-left-right"></i></span>
+                <span>Transfer</span>
+            </a>
+        </div>
+    </section>
+    
+    <section class="card transactions">
+        <div class="card-header">
+            <h3>Recent Transactions</h3>
+            <a href="{{ url_for('show_transactions') }}">View all</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Oct 18, 2025</td>
+                    <td><strong>Online Shopping</strong></td>
+                    <td><span class="txn-type debit">Debit</span></td>
+                    <td><strong>- ₹2,500.00</strong></td>
+                </tr>
+                <tr>
+                    <td>Oct 17, 2025</td>
+                    <td>Salary Deposit</td>
+                    <td><span class="txn-type credit">Credit</span></td>
+                    <td>+ ₹15,000.00</td>
+                </tr>
+                <tr>
+                    <td>Oct 16, 2025</td>
+                    <td>Cafe Coffee Day</td>
+                    <td><span class="txn-type debit">Debit</span></td>
+                    <td>- ₹450.00</td>
+                </tr>
+                 <tr>
+                    <td>Oct 15, 2025</td>
+                    <td>Friend Transfer</td>
+                    <td><span class="txn-type credit">Credit</span></td>
+                    <td>+ ₹1,000.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,464 @@
+/* General Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    /* নতুন গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+/* Sidebar (Glass Effect) */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    
+    /* গ্লাস এফেক্ট */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    
+    color: #ffffff; /* সব লেখা সাদা */
+    z-index: 100;
+}
+
+.sidebar .logo {
+    font-size: 26px;
+    font-weight: 700;
+    padding: 24px;
+    text-align: center;
+    color: #ffffff; /* লোগোর রঙ সাদা */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    letter-spacing: 1px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 20px 0;
+    flex-grow: 1;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* আইকন এবং লেখার মধ্যে গ্যাপ */
+    padding: 16px 24px;
+    text-decoration: none;
+    color: #f0f0f0; /* হালকা সাদা */
+    font-weight: 500;
+    border-radius: 8px;
+    margin: 6px 12px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.sidebar ul li a i {
+    font-size: 1.1rem; /* আইকনের সাইজ */
+}
+
+.sidebar ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* হোভার এফেক্ট */
+    color: #ffffff;
+}
+
+.sidebar ul li a.active {
+    background-color: #ffffff; /* অ্যাক্টিভ লিঙ্ক */
+    color: #667eea; /* থিমের প্রধান রঙ */
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+/* Header (Glass Effect) */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    
+    /* গ্লাস এফেক্ট */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-welcome h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff; /* সাদা লেখা */
+}
+
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #ffffff;
+}
+
+.header-profile .icon-btn {
+    font-size: 20px;
+    color: #f0f0f0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.header-profile .icon-btn:hover {
+    color: #ffffff;
+}
+
+.header-profile span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.profile-pic {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+}
+
+/* Main content wrapper */
+.content-wrapper {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+/* Flash Messages (Glass Effect) */
+.flash-messages {
+    margin-bottom: 20px;
+}
+.flash {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    /* গ্লাস এফেক্ট */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.flash i {
+    font-size: 1.2rem;
+}
+.flash.success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #ffffff;
+    border-color: rgba(76, 175, 80, 0.5);
+}
+.flash.danger {
+    background: rgba(244, 67, 54, 0.2);
+    color: #ffffff;
+    border-color: rgba(244, 67, 54, 0.5);
+}
+.flash.info {
+    background: rgba(33, 150, 243, 0.2);
+    color: #ffffff;
+    border-color: rgba(33, 150, 243, 0.5);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 24px;
+}
+
+/* Cards (Glass Effect) */
+.card {
+    border-radius: 16px;
+    padding: 24px;
+    
+    /* গ্লাস এফেক্ট */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #f0f0f0; /* কার্ডের ভেতরের লেখা সাদা */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff; /* হেডার লেখা সাদা */
+}
+
+.card-header a {
+    text-decoration: none;
+    color: #f0f0f0;
+    font-weight: 500;
+    font-size: 14px;
+}
+.card-header a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Balance Card (আগের চেয়ে উজ্জ্বল) */
+.balance-card {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(118, 75, 162, 0.5), rgba(102, 126, 234, 0.5));
+    color: white;
+}
+.balance-card .balance-details .currency {
+    font-size: 32px;
+    font-weight: 600;
+    margin-right: 5px;
+    opacity: 0.8;
+}
+.balance-card .balance-details .amount {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.balance-card .account-info {
+    margin-top: 20px;
+    opacity: 0.9;
+}
+.balance-card .account-info .label {
+    font-weight: 400;
+    margin-right: 8px;
+}
+.balance-card .account-info .value {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Actions Card */
+.quick-actions {
+    grid-column: span 1;
+}
+.quick-actions .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.quick-actions .action-btn {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.quick-actions .action-btn .icon {
+    font-size: 20px;
+    margin-right: 15px;
+}
+.quick-actions .action-btn.deposit {
+    background: rgba(76, 175, 80, 0.15);
+}
+.quick-actions .action-btn.withdraw {
+    background: rgba(255, 193, 7, 0.15);
+}
+.quick-actions .action-btn.transfer {
+    background: rgba(33, 150, 243, 0.15);
+}
+.quick-actions .action-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Transactions Card */
+.transactions {
+    grid-column: span 3;
+}
+.transactions table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.transactions th, .transactions td {
+    padding: 16px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.transactions th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #f0f0f0;
+    text-transform: uppercase;
+}
+.transactions td {
+    font-size: 15px;
+    color: #f0f0f0;
+}
+.transactions tbody tr:last-child td {
+    border-bottom: none;
+}
+.transactions .txn-type {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 13px;
+    color: #ffffff;
+}
+.transactions .txn-type.credit {
+    background-color: rgba(76, 175, 80, 0.4);
+}
+.transactions .txn-type.debit {
+    background-color: rgba(244, 67, 54, 0.4);
+}
+.transactions td strong {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Form Styling (Glass Effect) */
+.card-content {
+    padding-top: 20px;
+}
+.account-form .form-group {
+    margin-bottom: 20px;
+}
+.account-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #f0f0f0; /* লেবেলের রঙ সাদা */
+}
+.account-form input[type="text"],
+.account-form input[type="email"],
+.account-form input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    
+    /* গ্লাস এফেক্ট ইনপুট */
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff; /* লেখার রঙ সাদা */
+    
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.account-form input:focus {
+    outline: none;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+/* Placeholder text color */
+.account-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Button Styling */
+.cta-button {
+    background-color: #ffffff;
+    color: #667eea;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600; /* মোটা লেখা */
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.cta-button:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.cta-button-danger {
+    background-color: #f5222d;
+    color: white;
+}
+.cta-button-danger:hover {
+    background-color: #a8071a;
+    box-shadow: 0 6px 20px rgba(245, 34, 45, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .balance-card { grid-column: span 1; }
+    .transactions { grid-column: span 2; }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        left: -250px; /* মোবাইল ভিউতে হাইড করা */
+    }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .balance-card, .quick-actions, .transactions {
+        grid-column: span 1;
+    }
+    /* মোবাইল ভিউতে হেডার ওয়েলকাম মেসেজ ছোট করা */
+    .header-welcome h2 {
+        font-size: 18px;
+    }
+    .header-profile span:not(.icon-btn) {
+        display: none; /* নাম হাইড করা */
+    }
+}

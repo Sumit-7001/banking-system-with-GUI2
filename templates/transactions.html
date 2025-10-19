@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header">
+        <h3>View Last 5 Transactions</h3>
+    </div>
+    <form action="{{ url_for('show_transactions') }}" method="POST" class="account-form">
+        <div class="form-group">
+            <label for="acc_no">Account Number:</label>
+            <input type="text" id="acc_no" name="acc_no" required 
+                   value="{{ acc_no if acc_no }}">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="cta-button">Show Transactions</button>
+        </div>
+    </form>
+</section>
+
+{% if transactions %}
+<section class="card standings">
+    <div class="card-header">
+        <h3>Transaction History for {{ acc_no }}</h3>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>New Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tx in transactions %}
+            <tr>
+                <td>{{ tx.date }}</td>
+                <td>{{ tx.type }}</td>
+                <td style="color: {% if tx.type == 'Deposit' %}green{% else %}red{% endif %};">
+                    {{ tx.amount }}
+                </td>
+                <td>{{ tx.balance }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+{% endblock %}
