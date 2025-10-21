@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Login</title>
+    <!-- স্টাইলশীট এবং ফন্ট লিঙ্ক -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* শুধুমাত্র লগইন পেজের জন্য বিশেষ স্টাইল */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px; /* কন্টেইনারের সর্বোচ্চ প্রস্থ সেট করুন */
+            padding: 20px; /* ভিতরের দিকে প্যাডিং যোগ করুন */
+        }
+        .login-card {
+            /* style.css থেকে .card ক্লাসটি ব্যবহার করা হচ্ছে */
+            /* এখানে আর width সেট করার দরকার নেই, কারণ parent container handles it */
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d166b;
+        }
+        .login-header h2 {
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        .login-header p {
+            color: #0f0b42;
+        }
+        
+        /* নিশ্চিত করুন যে ইনপুট ফিল্ডগুলি 100% প্রস্থ নিচ্ছে */
+        .account-form input[type="text"],
+        .account-form input[type="password"] {
+            width: 100%; /* এটিই মূল সমাধান */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h2>Welcome Back!</h2>
+            <p>Please enter your credentials to login.</p>
+        </div>
+
+        <!-- ফ্ল্যাশ মেসেজ দেখানোর জন্য -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}"><i class="bi bi-exclamation-triangle-fill"></i> {{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card login-card">
+            <form action="{{ url_for('login') }}" method="POST" class="account-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group" style="margin-top: 2rem; text-align: center;">
+
+                    <button type="submit" class="cta-button" style="width: 50% ,display: flex ,text-align: center;">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

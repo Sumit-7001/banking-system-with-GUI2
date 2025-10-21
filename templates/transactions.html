@@ -10,7 +10,7 @@
         <div class="form-group">
             <label for="acc_no">Account Number:</label>
             <input type="text" id="acc_no" name="acc_no" required 
-                   value="{{ acc_no if acc_no }}">
+                   value="{{ acc_no_checked if acc_no_checked else '' }}">
         </div>
         <div class="form-group">
             <button type="submit" class="cta-button">Show Transactions</button>
@@ -19,9 +19,9 @@
 </section>
 
 {% if transactions %}
-<section class="card standings">
+<section class="card transactions">
     <div class="card-header">
-        <h3>Transaction History for {{ acc_no }}</h3>
+        <h3>Transaction History for {{ acc_no_checked }}</h3>
     </div>
     <table>
         <thead>
@@ -36,9 +36,13 @@
             {% for tx in transactions %}
             <tr>
                 <td>{{ tx.date }}</td>
-                <td>{{ tx.type }}</td>
-                <td style="color: {% if tx.type == 'Deposit' %}green{% else %}red{% endif %};">
-                    {{ tx.amount }}
+                <td>
+                    <span class="txn-type {{ 'credit' if tx.type == 'Deposit' else 'debit' }}">
+                        {{ tx.type }}
+                    </span>
+                </td>
+                <td style="color: {% if tx.type == 'Deposit' %}#34d399{% else %}#f87171{% endif %}; font-weight: 600;">
+                    {% if tx.type == 'Deposit' %}+{% else %}-{% endif %} {{ tx.amount }}
                 </td>
                 <td>{{ tx.balance }}</td>
             </tr>

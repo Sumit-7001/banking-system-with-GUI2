@@ -462,3 +462,16 @@ body {
         display: none; /* নাম হাইড করা */
     }
 }
+/* Add this to the END of your style.css file */
+.profile-pic-placeholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #334155; /* ডার্ক প্লেসহোল্ডার ব্যাকগ্রাউন্ড */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    border: 2px solid #34d399; /* অ্যাক্সেন্ট বর্ডার */
+}

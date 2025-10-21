@@ -1,58 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CoachPro Dashboard{% endblock %}</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <div class="dashboard-container">
         <nav class="sidebar">
             <div class="logo">
                 PyCrew
             </div>
-            
+
             <ul>
-                <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}"><i class="bi bi-grid-fill"></i> Dashboard</a></li>
-                <li><a href="{{ url_for('create_account') }}" class="{{ 'active' if request.endpoint == 'create_account' else '' }}"><i class="bi bi-person-plus-fill"></i> Create Account</a></li>
-                <li><a href="{{ url_for('deposit') }}" class="{{ 'active' if request.endpoint == 'deposit' else '' }}"><i class="bi bi-box-arrow-in-down"></i> Deposit Money</a></li>
-                <li><a href="{{ url_for('withdraw') }}" class="{{ 'active' if request.endpoint == 'withdraw' else '' }}"><i class="bi bi-box-arrow-up"></i> Withdraw Money</a></li>
-                <li><a href="{{ url_for('show_transactions') }}" class="{{ 'active' if request.endpoint == 'show_transactions' else '' }}"><i class="bi bi-card-list"></i> Transactions</a></li>
-                <li><a href="{{ url_for('check_balance') }}" class="{{ 'active' if request.endpoint == 'check_balance' else '' }}"><i class="bi bi-wallet-fill"></i> Check Balance</a></li>
-                <li><a href="#"><i class="bi bi-arrow-left-right"></i> Transfers</a></li> 
+                <li><a href="{{ url_for('dashboard') }}"
+                        class="{{ 'active' if request.endpoint == 'dashboard' else '' }}"><i
+                            class="bi bi-grid-fill"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('create_account') }}"
+                        class="{{ 'active' if request.endpoint == 'create_account' else '' }}"><i
+                            class="bi bi-person-plus-fill"></i> Create Account</a></li>
+                <li><a href="{{ url_for('deposit') }}"
+                        class="{{ 'active' if request.endpoint == 'deposit' else '' }}"><i
+                            class="bi bi-box-arrow-in-down"></i> Deposit Money</a></li>
+                <li><a href="{{ url_for('withdraw') }}"
+                        class="{{ 'active' if request.endpoint == 'withdraw' else '' }}"><i
+                            class="bi bi-box-arrow-up"></i> Withdraw Money</a></li>
+                <li><a href="{{ url_for('show_transactions') }}"
+                        class="{{ 'active' if request.endpoint == 'show_transactions' else '' }}"><i
+                            class="bi bi-card-list"></i> Transactions</a></li>
+                <li><a href="{{ url_for('check_balance') }}"
+                        class="{{ 'active' if request.endpoint == 'check_balance' else '' }}"><i
+                            class="bi bi-wallet-fill"></i> Check Balance</a></li>
+                <li><a href="#"><i class="bi bi-arrow-left-right"></i> Transfers</a></li>
                 <li><a href="#"><i class="bi bi-question-circle-fill"></i> Help</a></li>
+                <!-- ... আগের মেনু আইটেমগুলি ... -->
+                <!-- <li><a href="#"><i class="bi bi-question-circle-fill"></i> Help</a></li> -->
+
+                <!-- এই নতুন লাইনটি যোগ করুন -->
+                <li style="margin-top: auto;"><a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-left"></i>
+                        Logout</a></li>
+            </ul>
             </ul>
         </nav>
 
         <main class="main-content">
             <header class="main-header">
                 <div class="header-welcome">
-                    <h2>Welcome back , User 👋</h2>
+                    <h2>Welcome back, {{ session['full_name'] }} 👋</h2>
                 </div>
                 <div class="header-profile">
                     <span class="icon-btn"><i class="bi bi-search"></i></span>
                     <span class="icon-btn"><i class="bi bi-bell-fill"></i></span>
-                    <img src="{{ url_for('static', filename='s1.jpg') }}" alt="Sumit sahoo" class="profile-pic">
-                    <span>Sumit Sahoo</span>
-                </div>
+
+                    {% if session['image_file'] %}
+                        <img src="{{ url_for('static', filename=session['image_file']) }}" alt="{{ session['full_name'] }}" class="profile-pic">
+                    {% else %}
+                        <div class="profile-pic-placeholder">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <span>{{ session['full_name'] }}</span>
+                    </div>
             </header>
 
             <div class="content-wrapper">
-                
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    <div class="flash-messages">
-                      {% for category, message in messages %}
-                        <div class="flash {{ category }}"><i class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i> {{ message }}</div>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash {{ category }}"><i
+                            class="bi {{ 'bi-check-circle-fill' if category == 'success' else 'bi-exclamation-triangle-fill' }}"></i>
+                        {{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% endwith %}
 
                 {% block content %}{% endblock %}
@@ -60,4 +90,5 @@
         </main>
     </div>
 </body>
+
 </html>
