@@ -68,7 +68,14 @@ def login():
                 session['username'] = username
                 session['full_name'] = user_data['full_name']
                 session['image_file'] = user_data['image']
+                # সেশনে ব্যবহারকারীর সব তথ্য সেভ করুন
+                session['username'] = username
+                session['full_name'] = user_data['full_name']
+                session['image_file'] = user_data['image']
                 
+                # --- এই নতুন লাইনটি যোগ করুন ---
+                session['session_transaction_total'] = 0.0
+                # ---------------------------------
                 flash(f"Welcome back, {session['full_name']}!", 'success')
                 return redirect(url_for('dashboard'))
 
@@ -82,6 +89,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None) # সেশন থেকে ব্যবহারকারীর নাম মুছে ফেলা হচ্ছে
+    session.pop('session_transaction_total', None)
     flash("You have been logged out successfully.", 'info')
     return redirect(url_for('login'))
 
@@ -89,8 +97,9 @@ def logout():
 @app.route('/dashboard')
 @login_required # এই পেজটি অ্যাক্সেস করার জন্য লগইন আবশ্যক
 def dashboard():
-    return render_template('index.html')
-
+    # লগইন করা অ্যাডমিনের ইউজারনেম দিয়ে তার লগ ফাইল থেকে ডেটা আনবে
+    activities = excel_Day2.get_all_recent_activities(session['username'], 5)
+    return render_template('index.html', recent_activities=activities)
 # --- অ্যাকাউন্ট তৈরি ---
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -107,6 +116,11 @@ def create_account():
             
             if excel_Day2.create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
                 flash(f"Account created successfully for {name}!", 'success')
+            if excel_Day2.create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
+                flash(f"Account created successfully for {name}!", 'success')
+                # --- এই নতুন লাইনটি যোগ করুন ---
+                excel_Day2.save_admin_transaction(session['username'], "New Account", acc_no, balance)
+                # ---------------------------------
             else:
                 flash("Account already exists!", 'danger')
         except Exception as e:
@@ -131,6 +145,9 @@ def deposit():
                 new_balance = balance + amount
                 excel_Day2.update_balance(file_path, new_balance)
                 excel_Day2.save_transaction(file_path, "Deposit", amount, new_balance)
+                session['session_transaction_total'] = session.get('session_transaction_total', 0.0) + amount
+                # ---------------------------------
+                excel_Day2.save_admin_transaction(session['username'], "Deposit", acc_no, amount)
                 flash(f"Deposited {amount} successfully. New Balance: {new_balance}", 'success')
         except Exception as e:
             flash(f"An error occurred: {e}", 'danger')
@@ -157,6 +174,9 @@ def withdraw():
                     new_balance = balance - amount
                     excel_Day2.update_balance(file_path, new_balance)
                     excel_Day2.save_transaction(file_path, "Withdraw", amount, new_balance)
+                    session['session_transaction_total'] = session.get('session_transaction_total', 0.0) + amount
+                     # ---------------------------------
+                    excel_Day2.save_admin_transaction(session['username'], "Withdraw", acc_no, amount)
                     flash(f"Withdrew {amount} successfully. New Balance: {new_balance}", 'success')
         except Exception as e:
             flash(f"An error occurred: {e}", 'danger')

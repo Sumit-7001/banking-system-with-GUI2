@@ -4,7 +4,8 @@
 
 <div class="dashboard-grid">
     
-    <section class="card balance-card">
+    <!-- 
+    
         <div class="card-header">
             <h3>Your Current Balance</h3>
         </div>
@@ -18,6 +19,24 @@
             <div class="account-info">
                 <span class="label">Account Number:</span>
                 <span class="value">**** **** 0696</span>
+            </div>
+        </div>
+    </section> -->
+    <section class="card balance-card">
+        <div class="card-header">
+            <h3>Your Session Transactions</h3>
+        </div>
+        <div class="balance-details">
+            <span class="currency">₹</span>
+            <span class="amount">{{ "%.2f"|format(session.get('session_transaction_total', 0.0)) }}</span>
+            
+            <div class="account-info">
+                <span class="label">Admin Logged In:</span>
+                <span class="value">{{ session['full_name'] }}</span>
+            </div>
+            <div class="account-info">
+                <span class="label">Status:</span>
+                <span class="value">Online</span>
             </div>
         </div>
     </section>
@@ -43,47 +62,44 @@
     </section>
     
     <section class="card transactions">
-        <div class="card-header">
-            <h3>Recent Transactions</h3>
-            <a href="{{ url_for('show_transactions') }}">View all</a>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Oct 18, 2025</td>
-                    <td><strong>Online Shopping</strong></td>
-                    <td><span class="txn-type debit">Debit</span></td>
-                    <td><strong>- ₹2,500.00</strong></td>
-                </tr>
-                <tr>
-                    <td>Oct 17, 2025</td>
-                    <td>Salary Deposit</td>
-                    <td><span class="txn-type credit">Credit</span></td>
-                    <td>+ ₹15,000.00</td>
-                </tr>
-                <tr>
-                    <td>Oct 16, 2025</td>
-                    <td>Cafe Coffee Day</td>
-                    <td><span class="txn-type debit">Debit</span></td>
-                    <td>- ₹450.00</td>
-                </tr>
-                 <tr>
-                    <td>Oct 15, 2025</td>
-                    <td>Friend Transfer</td>
-                    <td><span class="txn-type credit">Credit</span></td>
-                    <td>+ ₹1,000.00</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+            <div class="card-header">
+                <h3>Recent Admin Activities ({{ session['username'] }})</h3>
+                <a href="#">View all</a>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Action</th>
+                        <th>Account No.</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in recent_activities %}
+                    <tr>
+                        <td>{{ activity.date.split(' ')[0] }}<br><small>{{ activity.date.split(' ')[1] }}</small></td>
+                        <td>
+                            <span class="txn-type {{ 'credit' if activity.action == 'Deposit' or activity.action == 'New Account' else 'debit' }}">
+                                {{ activity.action }}
+                            </span>
+                        </td>
+                        <td>{{ activity.account_no }}</td>
+                        <td style="color: #34d399; font-weight: 600;">
+                            {% if activity.action == 'Withdraw' %}-{% else %}+{% endif %} {{ "%.2f"|format(activity.amount|float) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 20px; color: #94a3b8;">
+                            No activities found for this admin.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </section>
 
 </div>
 {% endblock %}
