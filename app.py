@@ -1,11 +1,66 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-import excel_Day2  # আপনার মূল এক্সেল লজিক ফাইল
+import excel_Day2 
 from datetime import datetime
 from functools import wraps
+from fpdf import FPDF  
+from flask import make_response 
 
 app = Flask(__name__)
 app.secret_key = 'your_very_secret_key_for_flash_messages'
+
+
+# --- PDF তৈরির জন্য হেলপার ক্লাস ---
+class PDF(FPDF):
+    def header(self):
+        # লোগো বা ব্যাঙ্কের নাম
+        self.set_font('Arial', 'B', 15)
+        self.cell(0, 10, 'BRAINWARE BAKWAS BANK', 0, 1, 'C')
+        self.set_font('Arial', 'I', 12)
+        self.cell(0, 10, 'Transaction Statement', 0, 1, 'C')
+        self.ln(10) # লাইন ব্রেক
+
+    def footer(self):
+        # পেজ নম্বর
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
+    
+    def print_account_info(self, name, acc_no):
+        self.set_font('Arial', 'B', 12)
+        self.cell(0, 10, f'Account Holder: {name}', 0, 1, 'L')
+        self.cell(0, 10, f'Account Number: {acc_no}', 0, 1, 'L')
+        self.ln(5)
+
+    def print_transaction_table(self, transactions):
+        # টেবিল হেডার
+        self.set_font('Arial', 'B', 10)
+        self.set_fill_color(230, 230, 230) # হালকা ধূসর
+        self.cell(50, 10, 'Date', 1, 0, 'C', True)
+        self.cell(30, 10, 'Type', 1, 0, 'C', True)
+        self.cell(40, 10, 'Amount (INR)', 1, 0, 'C', True)
+        self.cell(40, 10, 'New Balance', 1, 1, 'C', True)
+        
+        # টেবিল ডেটা
+        self.set_font('Arial', '', 9)
+        # লেনদেনগুলি উল্টে নেওয়া হচ্ছে (পুরনো > নতুন)
+        for tx in reversed(transactions):
+            self.cell(50, 8, str(tx['date']), 1)
+            
+            # Deposit/Withdraw অনুযায়ী রঙ
+            if tx['type'] == 'Deposit':
+                self.set_text_color(0, 100, 0) # সবুজ
+                amount_str = f"+ {tx['amount']}"
+            else:
+                self.set_text_color(220, 50, 50) # লাল
+                amount_str = f"- {tx['amount']}"
+                
+            self.cell(30, 8, str(tx['type']), 1)
+            self.cell(40, 8, amount_str, 1, 0, 'R')
+            
+            self.set_text_color(0, 0, 0) # রঙ রিসেট
+            self.cell(40, 8, str(tx['balance']), 1, 1, 'R')
+# ------------------------------------
 
 USERS_DB = {
     "sumit": {
@@ -224,6 +279,41 @@ def show_transactions():
             flash(f"An error occurred: {e}", 'danger')
     return render_template('transactions.html', transactions=transactions, acc_no_checked=acc_no_checked)
 
+# --- PDF প্রিন্ট রুট ---
+@app.route('/print/<acc_no>')
+@login_required
+def print_transactions(acc_no):
+    try:
+        file_path = excel_Day2.GetAccount(acc_no)
+        if not os.path.exists(file_path):
+            flash("Account not found, cannot generate PDF.", 'danger')
+            return redirect(url_for('show_transactions'))
+
+        # এক্সেল থেকে ডেটা আনুন
+        details = excel_Day2.get_account_details(file_path)
+        transactions = excel_Day2.get_all_transactions(file_path)
+
+        if not transactions:
+            flash("No transactions found to print.", 'info')
+            return redirect(url_for('show_transactions'))
+
+        # PDF তৈরি করুন
+        pdf = PDF()
+        pdf.add_page()
+        pdf.print_account_info(details['name'], details['acc_no'])
+        pdf.print_transaction_table(transactions)
+        
+        # PDF ফাইলটি ব্রাউজারে দেখানোর জন্য প্রস্তুত করুন
+        pdf_bytes = pdf.output(dest='B')
+        response = make_response(pdf_bytes)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'inline; filename=transactions_{acc_no}.pdf'
+        
+        return response
+
+    except Exception as e:
+        flash(f"An error occurred while generating PDF: {e}", 'danger')
+        return redirect(url_for('show_transactions'))
 
 if __name__ == '__main__':
     app.run(debug=True)

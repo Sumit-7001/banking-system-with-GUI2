@@ -4,7 +4,6 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment
 
 BANKING_ACCOUNT = "ACCOUNT"
-
 ADMIN_LOGS = "ADMIN_LOGS"
 
 if not os.path.exists(ADMIN_LOGS):
@@ -14,6 +13,9 @@ if not os.path.exists(BANKING_ACCOUNT):
     os.makedirs(BANKING_ACCOUNT)
 
 # ---------------------------------------------------
+# --- অ্যাকাউন্ট সংক্রান্ত ফাংশন ---
+# ---------------------------------------------------
+
 def GetAccount(acc_no):
     return os.path.join(BANKING_ACCOUNT, f"Account__{acc_no}.xlsx")
 
@@ -41,16 +43,17 @@ def save_transaction(file_path, t_type, amount, new_balance):
     wb = load_workbook(file_path)
     ws = wb["Account"]
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # লেনদেনগুলি হেডার রো (11) এর পর থেকে যোগ হবে
     ws.append([now, t_type, amount, new_balance])
     wb.save(file_path)
     wb.close()
 
-# --- নতুন ফাংশন (New Function) ---
+# --- নতুন অ্যাকাউন্ট তৈরি (সঠিক করা) ---
 def create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
     file_path = GetAccount(acc_no)
     if os.path.exists(file_path):
         print("Account already exists!")
-        return False  # অ্যাকাউন্ট থাকলে False রিটার্ন করবে
+        return False
 
     wb = Workbook()
     ws = wb.active
@@ -77,20 +80,30 @@ def create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
     ws["A9"] = f"BALANCE : {balance}"
     ws["A9"].alignment = Alignment(horizontal="center", vertical="center")
 
-    ws.append([]) # একটি ফাঁকা সারি
-    ws.append(["Date", "Type", "Amount", "New Balance"])
+    # --- !! এখানে বাগ ঠিক করা হয়েছে !! ---
+    # Row 10 ফাঁকা
+    # Row 11-তে হেডার সেট করা হচ্ছে
+    ws["A11"] = "Date"
+    ws["B11"] = "Type"
+    ws["C11"] = "Amount"
+    ws["D11"] = "New Balance"
+    # -----------------------------------
 
     wb.save(file_path)
-    return True # সফলভাবে তৈরি হলে True রিটার্ন করবে
+    return True
 
-# --- নতুন ফাংশন (New Function) ---
+# --- লেনদেন পড়া (সঠিক করা) ---
 def get_last_transactions(file_path, num=5):
     wb = load_workbook(file_path)
     ws = wb["Account"]
     transactions = []
-    start_row = 12 # লেনদেন শুরু হয় ১২ নম্বর সারি থেকে
     
-    for row in range(ws.max_row, start_row - 1, -1):
+    # --- !! এখানে বাগ ঠিক করা হয়েছে !! ---
+    HEADER_ROW = 11 # হেডার Row 11-তে আছে
+    
+    # শেষ সারি (max_row) থেকে হেডার রো-এর পরের সারি (12) পর্যন্ত লুপ চলবে
+    for row in range(ws.max_row, HEADER_ROW, -1):
+    # -----------------------------------
         if len(transactions) >= num:
             break 
             
@@ -106,7 +119,14 @@ def get_last_transactions(file_path, num=5):
                 "amount": amount,
                 "balance": new_balance
             })
-    # --- অ্যাডমিন লগিং-এর জন্য নতুন ফাংশন ---
+            
+    wb.close()
+    return transactions
+
+# ---------------------------------------------------
+# --- অ্যাডমিন লগিং-এর জন্য নতুন ফাংশন ---
+# (আগে এটি ভুল জায়গায় পেস্ট করা ছিল)
+# ---------------------------------------------------
 
 def GetAdminLogFile(admin_username):
     """অ্যাডমিনের নিজস্ব লগ ফাইলের পাথ রিটার্ন করে।"""
@@ -140,7 +160,7 @@ def save_admin_transaction(admin_username, action_type, account_no, amount):
     wb.close()
 
 def get_all_recent_activities(admin_username, num=5):
-    """নির্দিষ্ট অ্যাডমিনের লগ ফাইল থেকে শেষ ৫টি কার্যকলাপ পড়ে।"""
+    """নির্দিষ্ট অ্যাডমিনের লগ ফাইল থেকে শেষ ৫টি কার্যকলাপ পড়ে।"""
     file_path = GetAdminLogFile(admin_username)
     
     if not os.path.exists(file_path):
@@ -150,7 +170,7 @@ def get_all_recent_activities(admin_username, num=5):
     ws = wb.active
     activities = []
     
-    # হেডার (সারি ১) বাদ দিয়ে উল্টো দিক থেকে পড়া শুরু করবে
+    # হেডার (সারি ১) বাদ দিয়ে উল্টো দিক থেকে পড়া শুরু করবে
     for row in range(ws.max_row, 1, -1):
         if len(activities) >= num:
             break 
@@ -171,6 +191,43 @@ def get_all_recent_activities(admin_username, num=5):
             })
             
     wb.close()
-    return activities       
+    return activities
+
+# --- PDF প্রিন্টিং-এর জন্য নতুন ফাংশন ---
+
+def get_account_details(file_path):
+    """PDF-এ দেখানোর জন্য অ্যাকাউন্টের নাম ও নম্বর পড়ে।"""
+    wb = load_workbook(file_path)
+    ws = wb["Account"]
+    details = {
+        "name": ws["B2"].value,      # Account Holder Name
+        "acc_no": ws["B3"].value     # Account Number
+    }
     wb.close()
-    return transactions
+    return details
+
+def get_all_transactions(file_path):
+    """একটি অ্যাকাউন্টের সমস্ত লেনদেন পড়ে (PDF-এর জন্য)।"""
+    wb = load_workbook(file_path)
+    ws = wb["Account"]
+    transactions = []
+    HEADER_ROW = 11 # আমরা জানি হেডার Row 11-তে আছে
+    
+    # শেষ সারি (max_row) থেকে হেডার রো-এর পরের সারি (12) পর্যন্ত লুপ চলবে
+    for row in range(ws.max_row, HEADER_ROW, -1):
+        
+        date = ws.cell(row=row, column=1).value
+        ttype = ws.cell(row=row, column=2).value
+        amount = ws.cell(row=row, column=3).value
+        new_balance = ws.cell(row=row, column=4).value
+        
+        if date: 
+            transactions.append({
+                "date": date,
+                "type": ttype,
+                "amount": amount,
+                "balance": new_balance
+            })
+            
+    wb.close()
+    return transactions # উল্টো অর্ডারে রিটার্ন করবে (নতুন > পুরনো)

@@ -22,7 +22,14 @@
 <section class="card transactions">
     <div class="card-header">
         <h3>Transaction History for {{ acc_no_checked }}</h3>
+        
+        <a href="{{ url_for('print_transactions', acc_no=acc_no_checked) }}" 
+           class="cta-button" 
+           target="_blank">
+           <i class="bi bi-printer-fill"></i> Print PDF
+        </a>
     </div>
+
     <table>
         <thead>
             <tr>
@@ -41,7 +48,8 @@
                         {{ tx.type }}
                     </span>
                 </td>
-                <td style="color: {% if tx.type == 'Deposit' %}#34d399{% else %}#f87171{% endif %}; font-weight: 600;">
+                
+                <td style="color: {% if tx.type == 'Deposit' %}#155724{% else %}#721c24{% endif %}; font-weight: 600;">
                     {% if tx.type == 'Deposit' %}+{% else %}-{% endif %} {{ tx.amount }}
                 </td>
                 <td>{{ tx.balance }}</td>
