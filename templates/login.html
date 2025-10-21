@@ -9,41 +9,68 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        /* --- নতুন অ্যানিমেশন কীফ্রেম --- */
+        @keyframes gradientDrift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* শুধুমাত্র লগইন পেজের জন্য বিশেষ স্টাইল */
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            
+            /* --- নতুন অ্যানিমেটেড গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড --- */
+            background: linear-gradient(-45deg, #f5e3ff, #e9d5ff, #d1eaff, #e0f2f1);
+            background-size: 400% 400%;
+            animation: gradientDrift 20s ease infinite;
+            background-attachment: fixed;
         }
+        
         .login-container {
             width: 100%;
-            max-width: 400px; /* কন্টেইনারের সর্বোচ্চ প্রস্থ সেট করুন */
-            padding: 20px; /* ভিতরের দিকে প্যাডিং যোগ করুন */
-        }
-        .login-card {
-            /* style.css থেকে .card ক্লাসটি ব্যবহার করা হচ্ছে */
-            /* এখানে আর width সেট করার দরকার নেই, কারণ parent container handles it */
+            max-width: 400px;
+            padding: 20px;
         }
         .login-header {
             text-align: center;
             margin-bottom: 2rem;
-            color: #2d166b;
+            color: #333;
         }
         .login-header h2 {
             font-weight: 600;
             font-size: 2rem;
+            color: #6a00e0;
         }
         .login-header p {
-            color: #0f0b42;
+            color: #555;
         }
         
-        /* নিশ্চিত করুন যে ইনপুট ফিল্ডগুলি 100% প্রস্থ নিচ্ছে */
         .account-form input[type="text"],
         .account-form input[type="password"] {
-            width: 100%; /* এটিই মূল সমাধান */
+            width: 100%;
         }
-        
+
+        /* লগআউট বক্সটিকে হালকা থিমে আনা */
+        .flash {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .flash.info {
+            background: rgba(0, 123, 255, 0.1);
+            color: #004085;
+            border-color: rgba(0, 123, 255, 0.2);
+        }
+        .flash.danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border-color: rgba(220, 53, 69, 0.2);
+        }
     </style>
 </head>
 <body>

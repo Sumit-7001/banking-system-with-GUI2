@@ -1,3 +1,12 @@
+/*
+================================
+V9: Animated Light Glassmorphism (সম্পূর্ণ ঠিক করা)
+================================
+- V8-এর ডিজাইন + অ্যানিমেটেড গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড
+- কার্ডে হোভার করলে অ্যানিমেটেড গ্র্যাডিয়েন্ট বর্ডার
+- ইনপুট ক্লিক করার সমস্যা সমাধান করা হয়েছে
+*/
+
 /* General Setup */
 * {
     box-sizing: border-box;
@@ -5,21 +14,33 @@
     padding: 0;
 }
 
+/* --- নতুন অ্যানিমেশন কীফ্রেম --- */
+@keyframes gradientDrift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    /* নতুন গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* --- নতুন অ্যানিমেটেড গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড --- */
+    background: linear-gradient(-45deg, #f5e3ff, #e9d5ff, #d1eaff, #e0f2f1);
+    background-size: 400% 400%; /* গ্র্যাডিয়েন্টকে বড় করা হয়েছে */
+    animation: gradientDrift 20s ease infinite; /* অ্যানিমেশন প্রয়োগ করা হয়েছে */
+    /* ------------------------------------------- */
+    
+    background-attachment: fixed;
     color: #333;
     margin: 0;
     min-height: 100vh;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
 .dashboard-container {
     display: flex;
 }
 
-/* Sidebar (Glass Effect) */
+/* Sidebar (V8-এর মতোই) */
 .sidebar {
     width: 250px;
     height: 100vh;
@@ -28,15 +49,12 @@ body {
     top: 0;
     display: flex;
     flex-direction: column;
-    
-    /* গ্লাস এফেক্ট */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-    
-    color: #ffffff; /* সব লেখা সাদা */
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    color: #333;
     z-index: 100;
 }
 
@@ -45,8 +63,8 @@ body {
     font-weight: 700;
     padding: 24px;
     text-align: center;
-    color: #ffffff; /* লোগোর রঙ সাদা */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #6a00e0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     letter-spacing: 1px;
 }
 
@@ -59,29 +77,33 @@ body {
 .sidebar ul li a {
     display: flex;
     align-items: center;
-    gap: 15px; /* আইকন এবং লেখার মধ্যে গ্যাপ */
+    gap: 15px;
     padding: 16px 24px;
     text-decoration: none;
-    color: #f0f0f0; /* হালকা সাদা */
+    color: #444;
     font-weight: 500;
     border-radius: 8px;
     margin: 6px 12px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 0.2s ease;
 }
 .sidebar ul li a i {
-    font-size: 1.1rem; /* আইকনের সাইজ */
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
 }
 
 .sidebar ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* হোভার এফেক্ট */
-    color: #ffffff;
+    background: rgba(0, 0, 0, 0.05);
+    color: #000;
 }
 
 .sidebar ul li a.active {
-    background-color: #ffffff; /* অ্যাক্টিভ লিঙ্ক */
-    color: #667eea; /* থিমের প্রধান রঙ */
+    background: linear-gradient(135deg, #6a00e0 0%, #a770ef 100%);
+    color: #ffffff;
     font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(106, 0, 224, 0.3);
+}
+.sidebar ul li a.active i {
+    color: #ffffff;
 }
 
 /* Main Content */
@@ -93,105 +115,35 @@ body {
     width: calc(100% - 250px);
 }
 
-/* Header (Glass Effect) */
 .main-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 30px;
-    
-    /* গ্লাস এফেক্ট */
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     position: sticky;
     top: 0;
     z-index: 10;
 }
+.header-welcome h2 { margin: 0; font-size: 22px; font-weight: 600; color: #333; }
+.header-profile { display: flex; align-items: center; gap: 20px; color: #333; }
+.header-profile .icon-btn { font-size: 20px; color: #555; cursor: pointer; transition: color 0.2s ease; }
+.header-profile .icon-btn:hover { color: #6a00e0; }
+.header-profile span { font-size: 16px; font-weight: 500; }
+.profile-pic { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #6a00e0; }
+.profile-pic-placeholder { width: 42px; height: 42px; border-radius: 50%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #6a00e0; border: 2px solid #6a00e0; }
+.content-wrapper { padding: 30px; flex-grow: 1; }
 
-.header-welcome h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    color: #ffffff; /* সাদা লেখা */
-}
-
-.header-profile {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: #ffffff;
-}
-
-.header-profile .icon-btn {
-    font-size: 20px;
-    color: #f0f0f0;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-.header-profile .icon-btn:hover {
-    color: #ffffff;
-}
-
-.header-profile span {
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.profile-pic {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ffffff;
-}
-
-/* Main content wrapper */
-.content-wrapper {
-    padding: 30px;
-    flex-grow: 1;
-}
-
-/* Flash Messages (Glass Effect) */
-.flash-messages {
-    margin-bottom: 20px;
-}
-.flash {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    
-    /* গ্লাস এফেক্ট */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-.flash i {
-    font-size: 1.2rem;
-}
-.flash.success {
-    background: rgba(76, 175, 80, 0.2);
-    color: #ffffff;
-    border-color: rgba(76, 175, 80, 0.5);
-}
-.flash.danger {
-    background: rgba(244, 67, 54, 0.2);
-    color: #ffffff;
-    border-color: rgba(244, 67, 54, 0.5);
-}
-.flash.info {
-    background: rgba(33, 150, 243, 0.2);
-    color: #ffffff;
-    border-color: rgba(33, 150, 243, 0.5);
-}
+/* Flash Messages (V8-এর মতোই) */
+.flash-messages { margin-bottom: 20px; }
+.flash { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-radius: 12px; margin-bottom: 15px; font-weight: 500; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+.flash i { font-size: 1.2rem; }
+.flash.success { background: rgba(40, 167, 69, 0.1); color: #155724; border-color: rgba(40, 167, 69, 0.2); }
+.flash.danger { background: rgba(220, 53, 69, 0.1); color: #721c24; border-color: rgba(220, 53, 69, 0.2); }
+.flash.info { background: rgba(0, 123, 255, 0.1); color: #004085; border-color: rgba(0, 123, 255, 0.2); }
 
 /* Dashboard Grid */
 .dashboard-grid {
@@ -200,278 +152,129 @@ body {
     grid-gap: 24px;
 }
 
-/* Cards (Glass Effect) */
+/* Cards (হালকা গ্লাস এফেক্ট) */
 .card {
     border-radius: 16px;
     padding: 24px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     
-    /* গ্লাস এফেক্ট */
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- অ্যানিমেটেড বর্ডার এফেক্ট (ঠিক করা) --- */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 16px;
+    padding: 2px; /* বর্ডারের পুরুত্ব */
+    background: linear-gradient(135deg, #6a00e0, #a770ef, #d1eaff);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #f0f0f0; /* কার্ডের ভেতরের লেখা সাদা */
+    /* --- এই সেই ঠিক করা লাইনটি --- */
+    pointer-events: none;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.08);
 }
+.card:hover::before {
+    opacity: 1;
+}
+/* -------------------------------------- */
+
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding-bottom: 16px;
     margin-bottom: 20px;
 }
+.card-header h3 { margin: 0; font-size: 18px; font-weight: 600; color: #333; }
+.card-header a { text-decoration: none; color: #6a00e0; font-weight: 500; font-size: 14px; }
+.card-header a:hover { color: #a770ef; text-decoration: underline; }
 
-.card-header h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff; /* হেডার লেখা সাদা */
-}
-
-.card-header a {
-    text-decoration: none;
-    color: #f0f0f0;
-    font-weight: 500;
-    font-size: 14px;
-}
-.card-header a:hover {
-    color: #ffffff;
-    text-decoration: underline;
-}
-
-/* Balance Card (আগের চেয়ে উজ্জ্বল) */
+/* Balance Card */
 .balance-card {
     grid-column: span 2;
-    background: linear-gradient(135deg, rgba(118, 75, 162, 0.5), rgba(102, 126, 234, 0.5));
-    color: white;
-}
-.balance-card .balance-details .currency {
-    font-size: 32px;
-    font-weight: 600;
-    margin-right: 5px;
-    opacity: 0.8;
-}
-.balance-card .balance-details .amount {
-    font-size: 56px;
-    font-weight: 700;
-    line-height: 1.1;
-}
-.balance-card .account-info {
-    margin-top: 20px;
-    opacity: 0.9;
-}
-.balance-card .account-info .label {
-    font-weight: 400;
-    margin-right: 8px;
-}
-.balance-card .account-info .value {
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-/* Quick Actions Card */
-.quick-actions {
-    grid-column: span 1;
-}
-.quick-actions .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.quick-actions .action-btn {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 16px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: linear-gradient(135deg, #6a00e0 0%, #a770ef 100%);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: none;
 }
-.quick-actions .action-btn .icon {
-    font-size: 20px;
-    margin-right: 15px;
+.balance-card:hover {
+    box-shadow: 0 10px 40px 0 rgba(106, 0, 224, 0.3);
+    border: none;
 }
-.quick-actions .action-btn.deposit {
-    background: rgba(76, 175, 80, 0.15);
+.balance-card::before {
+    display: none;
 }
-.quick-actions .action-btn.withdraw {
-    background: rgba(255, 193, 7, 0.15);
-}
-.quick-actions .action-btn.transfer {
-    background: rgba(33, 150, 243, 0.15);
-}
-.quick-actions .action-btn:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    background: rgba(255, 255, 255, 0.2);
-}
+.balance-card .card-header h3 { color: #ffffff; border-bottom-color: rgba(255, 255, 255, 0.2); }
+.balance-card .balance-details .currency { font-size: 32px; font-weight: 600; margin-right: 5px; opacity: 0.8; }
+.balance-card .balance-details .amount { font-size: 56px; font-weight: 700; line-height: 1.1; }
+.balance-card .account-info { margin-top: 20px; opacity: 0.9; }
+.balance-card .account-info .label { font-weight: 400; margin-right: 8px; }
+.balance-card .account-info .value { font-weight: 600; letter-spacing: 0.5px; }
 
-/* Transactions Card */
-.transactions {
-    grid-column: span 3;
-}
-.transactions table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.transactions th, .transactions td {
-    padding: 16px 8px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.transactions th {
-    font-weight: 600;
-    font-size: 14px;
-    color: #f0f0f0;
-    text-transform: uppercase;
-}
-.transactions td {
-    font-size: 15px;
-    color: #f0f0f0;
-}
-.transactions tbody tr:last-child td {
-    border-bottom: none;
-}
-.transactions .txn-type {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 13px;
-    color: #ffffff;
-}
-.transactions .txn-type.credit {
-    background-color: rgba(76, 175, 80, 0.4);
-}
-.transactions .txn-type.debit {
-    background-color: rgba(244, 67, 54, 0.4);
-}
-.transactions td strong {
-    font-weight: 600;
-    color: #ffffff;
-}
+/* Quick Actions */
+.quick-actions { grid-column: span 1; }
+.quick-actions .action-buttons { display: flex; flex-direction: column; gap: 15px; }
+.quick-actions .action-btn { display: flex; align-items: center; padding: 15px; border-radius: 10px; text-decoration: none; font-weight: 500; font-size: 16px; transition: all 0.2s ease; color: #333; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); }
+.quick-actions .action-btn .icon { font-size: 20px; margin-right: 15px; color: #6a00e0; }
+.quick-actions .action-btn:hover { background: rgba(255, 255, 255, 1); color: #000; border-color: rgba(106, 0, 224, 0.3); transform: scale(1.03); }
 
-/* Form Styling (Glass Effect) */
-.card-content {
-    padding-top: 20px;
-}
-.account-form .form-group {
-    margin-bottom: 20px;
-}
-.account-form label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 15px;
-    color: #f0f0f0; /* লেবেলের রঙ সাদা */
-}
+/* Transactions */
+.transactions { grid-column: span 3; }
+.transactions table { width: 100%; border-collapse: collapse; }
+.transactions th, .transactions td { padding: 16px 8px; text-align: left; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+.transactions th { font-weight: 600; font-size: 14px; color: #777; text-transform: uppercase; }
+.transactions td { font-size: 15px; color: #333; }
+.transactions tbody tr:last-child td { border-bottom: none; }
+.transactions .txn-type { padding: 5px 10px; border-radius: 20px; font-weight: 500; font-size: 13px; border: 1px solid transparent; }
+.transactions .txn-type.credit { background: rgba(40, 167, 69, 0.1); color: #155724; border-color: rgba(40, 167, 69, 0.3); }
+.transactions .txn-type.debit { background: rgba(220, 53, 69, 0.1); color: #721c24; border-color: rgba(220, 53, 69, 0.3); }
+.transactions td strong { font-weight: 600; color: #000; }
+.transactions td small { color: #888; }
+
+/* Forms */
+.card-content { padding-top: 20px; }
+.account-form .form-group { margin-bottom: 20px; }
+.account-form label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; color: #333; }
 .account-form input[type="text"],
 .account-form input[type="email"],
-.account-form input[type="number"] {
+.account-form input[type="number"],
+.account-form input[type="password"] {
     width: 100%;
     padding: 12px 15px;
     border-radius: 8px;
     font-family: 'Poppins', sans-serif;
     font-size: 15px;
-    
-    /* গ্লাস এফেক্ট ইনপুট */
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #ffffff; /* লেখার রঙ সাদা */
-    
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.account-form input:focus {
-    outline: none;
-    border-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-}
-/* Placeholder text color */
-.account-form input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
+.account-form input:focus { outline: none; border-color: #6a00e0; box-shadow: 0 0 0 3px rgba(106, 0, 224, 0.2); }
+.account-form input::placeholder { color: #888; }
 
-/* Button Styling */
-.cta-button {
-    background-color: #ffffff;
-    color: #667eea;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600; /* মোটা লেখা */
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 16px;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-.cta-button:hover {
-    background-color: #f0f0f0;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-}
+/* Buttons */
+.cta-button { background: linear-gradient(135deg, #6a00e0 0%, #a770ef 100%); color: #ffffff; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(106, 0, 224, 0.2); }
+.cta-button:hover { background: linear-gradient(135deg, #5a00c8 0%, #9b60e0 100%); box-shadow: 0 5px 20px rgba(106, 0, 224, 0.3); transform: translateY(-2px); }
+.cta-button-danger { background: #dc3545; color: white; background-image: none; }
+.cta-button-danger:hover { background: #c82333; background-image: none; box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3); }
 
-.cta-button-danger {
-    background-color: #f5222d;
-    color: white;
-}
-.cta-button-danger:hover {
-    background-color: #a8071a;
-    box-shadow: 0 6px 20px rgba(245, 34, 45, 0.3);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .balance-card { grid-column: span 1; }
-    .transactions { grid-column: span 2; }
-}
-
-@media (max-width: 992px) {
-    .sidebar {
-        left: -250px; /* মোবাইল ভিউতে হাইড করা */
-    }
-    .main-content {
-        margin-left: 0;
-        width: 100%;
-    }
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    .balance-card, .quick-actions, .transactions {
-        grid-column: span 1;
-    }
-    /* মোবাইল ভিউতে হেডার ওয়েলকাম মেসেজ ছোট করা */
-    .header-welcome h2 {
-        font-size: 18px;
-    }
-    .header-profile span:not(.icon-btn) {
-        display: none; /* নাম হাইড করা */
-    }
-}
-/* Add this to the END of your style.css file */
-.profile-pic-placeholder {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background-color: #334155; /* ডার্ক প্লেসহোল্ডার ব্যাকগ্রাউন্ড */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: #94a3b8;
-    border: 2px solid #34d399; /* অ্যাক্সেন্ট বর্ডার */
-}
+/* Responsive */
+@media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr 1fr; } .balance-card { grid-column: span 1; } .transactions { grid-column: span 2; } }
+@media (max-width: 992px) { .sidebar { left: -250px; } .main-content { margin-left: 0; width: 100%; } .dashboard-grid { grid-template-columns: 1fr; } .balance-card, .quick-actions, .transactions { grid-column: span 1; } .header-welcome h2 { font-size: 18px; } .header-profile span:not(.icon-btn) { display: none; } }
