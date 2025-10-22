@@ -297,7 +297,7 @@ def print_transactions(acc_no):
         pdf.print_transaction_table(transactions)
         
         
-        pdf_bytes = pdf.output(dest='S').encode('latin1')
+        pdf_bytes = pdf.output(dest='B')
         response = make_response(pdf_bytes)
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'inline; filename=transactions_{acc_no}.pdf'

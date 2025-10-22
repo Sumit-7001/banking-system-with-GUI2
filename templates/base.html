@@ -18,9 +18,9 @@
     <div class="dashboard-container">
         <nav class="sidebar">
             <div class="logo">
+                <img src="{{ url_for('static', filename='image-removebg-preview.png') }}" alt="PyCrew Logo" class="logo-img">
                 PyCrew
             </div>
-
             <ul>
                 <li><a href="{{ url_for('dashboard') }}"
                         class="{{ 'active' if request.endpoint == 'dashboard' else '' }}"><i
@@ -62,15 +62,16 @@
                     <span class="icon-btn"><i class="bi bi-bell-fill"></i></span>
 
                     {% if session['image_file'] %}
-                        <img src="{{ url_for('static', filename=session['image_file']) }}" alt="{{ session['full_name'] }}" class="profile-pic">
+                    <img src="{{ url_for('static', filename=session['image_file']) }}" alt="{{ session['full_name'] }}"
+                        class="profile-pic">
                     {% else %}
-                        <div class="profile-pic-placeholder">
-                            <i class="bi bi-person-fill"></i>
-                        </div>
-                    {% endif %}
-                    
-                    <span>{{ session['full_name'] }}</span>
+                    <div class="profile-pic-placeholder">
+                        <i class="bi bi-person-fill"></i>
                     </div>
+                    {% endif %}
+
+                    <span>{{ session['full_name'] }}</span>
+                </div>
             </header>
 
             <div class="content-wrapper">
