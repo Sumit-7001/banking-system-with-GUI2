@@ -10,15 +10,15 @@ app = Flask(__name__)
 app.secret_key = 'your_very_secret_key_for_flash_messages'
 
 
-# --- PDF তৈরির জন্য হেলপার ক্লাস ---
+
 class PDF(FPDF):
     def header(self):
-        # লোগো বা ব্যাঙ্কের নাম
+       
         self.set_font('Arial', 'B', 15)
         self.cell(0, 10, 'BRAINWARE BAKWAS BANK', 0, 1, 'C')
         self.set_font('Arial', 'I', 12)
         self.cell(0, 10, 'Transaction Statement', 0, 1, 'C')
-        self.ln(10) # লাইন ব্রেক
+        self.ln(10) 
 
     def footer(self):
         # পেজ নম্বর
@@ -35,45 +35,46 @@ class PDF(FPDF):
     def print_transaction_table(self, transactions):
         # টেবিল হেডার
         self.set_font('Arial', 'B', 10)
-        self.set_fill_color(230, 230, 230) # হালকা ধূসর
+        self.set_fill_color(230, 230, 230) 
         self.cell(50, 10, 'Date', 1, 0, 'C', True)
         self.cell(30, 10, 'Type', 1, 0, 'C', True)
         self.cell(40, 10, 'Amount (INR)', 1, 0, 'C', True)
         self.cell(40, 10, 'New Balance', 1, 1, 'C', True)
         
-        # টেবিল ডেটা
+        
         self.set_font('Arial', '', 9)
-        # লেনদেনগুলি উল্টে নেওয়া হচ্ছে (পুরনো > নতুন)
+        
         for tx in reversed(transactions):
             self.cell(50, 8, str(tx['date']), 1)
             
-            # Deposit/Withdraw অনুযায়ী রঙ
+            
             if tx['type'] == 'Deposit':
-                self.set_text_color(0, 100, 0) # সবুজ
+                self.set_text_color(0, 100, 0) 
                 amount_str = f"+ {tx['amount']}"
             else:
-                self.set_text_color(220, 50, 50) # লাল
+                self.set_text_color(220, 50, 50) 
                 amount_str = f"- {tx['amount']}"
                 
             self.cell(30, 8, str(tx['type']), 1)
             self.cell(40, 8, amount_str, 1, 0, 'R')
             
-            self.set_text_color(0, 0, 0) # রঙ রিসেট
+            self.set_text_color(0, 0, 0) 
             self.cell(40, 8, str(tx['balance']), 1, 1, 'R')
+           
 # ------------------------------------
 
 USERS_DB = {
-    "sumit": {
-        "password": "pass123",
+    "Sumit": {
+        "password": "sumit123",
         "full_name": "Sumit Sahoo",
         "image": "s1.jpg"  
     },
-    "moumi": { 
+    "Moumi": { 
         "password": "moumi123", 
         "full_name": "Moumi",
         "image": "moumi.jpeg" 
     },
-    "rudra": {
+    "Rudra": {
         "password": "rudra123",
         "full_name": "Rudra",
         "image": "jeet.jpg" 
@@ -90,8 +91,7 @@ USERS_DB = {
     }
 }
 
-# --- লগইন ডেকোরেটর ---
-# এই ফাংশনটি চেক করবে ব্যবহারকারী লগইন করেছেন কিনা
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -101,11 +101,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# --- লগইন পেজ ---
-# --- লগইন পেজ ---
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    # যদি ব্যবহারকারী ইতিমধ্যে লগইন করে থাকেন, তাকে ড্যাশবোর্ডে পাঠানো হবে
+    
     if 'username' in session:
         return redirect(url_for('dashboard'))
 
@@ -113,49 +112,45 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # USERS_DB থেকে ব্যবহারকারীকে খুঁজুন
+
         if username in USERS_DB:
             user_data = USERS_DB[username]
             
-            # পাসওয়ার্ড চেক করুন
+
             if user_data['password'] == password:
-                # সেশনে ব্যবহারকারীর সব তথ্য সেভ করুন
+
                 session['username'] = username
                 session['full_name'] = user_data['full_name']
                 session['image_file'] = user_data['image']
-                # সেশনে ব্যবহারকারীর সব তথ্য সেভ করুন
+
                 session['username'] = username
                 session['full_name'] = user_data['full_name']
                 session['image_file'] = user_data['image']
                 
-                # --- এই নতুন লাইনটি যোগ করুন ---
                 session['session_transaction_total'] = 0.0
-                # ---------------------------------
+ 
                 flash(f"Welcome back, {session['full_name']}!", 'success')
                 return redirect(url_for('dashboard'))
 
-        # লগইন ব্যর্থ হলে
         flash("Invalid username or password. Please try again.", 'danger')
         return redirect(url_for('login'))
         
     return render_template('login.html')
 
-# --- লগআউট ---
 @app.route('/logout')
 def logout():
-    session.pop('username', None) # সেশন থেকে ব্যবহারকারীর নাম মুছে ফেলা হচ্ছে
+    session.pop('username', None) 
     session.pop('session_transaction_total', None)
     flash("You have been logged out successfully.", 'info')
     return redirect(url_for('login'))
 
-# --- ড্যাশবোর্ড / হোম পেজ ---
 @app.route('/dashboard')
-@login_required # এই পেজটি অ্যাক্সেস করার জন্য লগইন আবশ্যক
+@login_required 
 def dashboard():
-    # লগইন করা অ্যাডমিনের ইউজারনেম দিয়ে তার লগ ফাইল থেকে ডেটা আনবে
+    
     activities = excel_Day2.get_all_recent_activities(session['username'], 5)
     return render_template('index.html', recent_activities=activities)
-# --- অ্যাকাউন্ট তৈরি ---
+
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_account():
@@ -173,7 +168,7 @@ def create_account():
                 flash(f"Account created successfully for {name}!", 'success')
             if excel_Day2.create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
                 flash(f"Account created successfully for {name}!", 'success')
-                # --- এই নতুন লাইনটি যোগ করুন ---
+                
                 excel_Day2.save_admin_transaction(session['username'], "New Account", acc_no, balance)
                 # ---------------------------------
             else:
@@ -183,7 +178,7 @@ def create_account():
         return redirect(url_for('create_account'))
     return render_template('create_account.html')
 
-# --- টাকা জমা (Deposit) ---
+
 @app.route('/deposit', methods=['GET', 'POST'])
 @login_required
 def deposit():
@@ -209,7 +204,7 @@ def deposit():
         return redirect(url_for('deposit'))
     return render_template('deposit.html')
 
-# --- টাকা তোলা (Withdraw) ---
+
 @app.route('/withdraw', methods=['GET', 'POST'])
 @login_required
 def withdraw():
@@ -238,7 +233,7 @@ def withdraw():
         return redirect(url_for('withdraw'))
     return render_template('withdraw.html')
 
-# --- ব্যালেন্স চেক ---
+
 @app.route('/balance', methods=['GET', 'POST'])
 @login_required
 def check_balance():
@@ -258,7 +253,6 @@ def check_balance():
             flash(f"An error occurred: {e}", 'danger')
     return render_template('check_balance.html', balance=balance, acc_no=acc_no_checked)
 
-# --- লেনদেন (Transactions) ---
 @app.route('/transactions', methods=['GET', 'POST'])
 @login_required
 def show_transactions():
@@ -279,7 +273,6 @@ def show_transactions():
             flash(f"An error occurred: {e}", 'danger')
     return render_template('transactions.html', transactions=transactions, acc_no_checked=acc_no_checked)
 
-# --- PDF প্রিন্ট রুট ---
 @app.route('/print/<acc_no>')
 @login_required
 def print_transactions(acc_no):
@@ -289,7 +282,7 @@ def print_transactions(acc_no):
             flash("Account not found, cannot generate PDF.", 'danger')
             return redirect(url_for('show_transactions'))
 
-        # এক্সেল থেকে ডেটা আনুন
+        
         details = excel_Day2.get_account_details(file_path)
         transactions = excel_Day2.get_all_transactions(file_path)
 
@@ -297,19 +290,19 @@ def print_transactions(acc_no):
             flash("No transactions found to print.", 'info')
             return redirect(url_for('show_transactions'))
 
-        # PDF তৈরি করুন
+        
         pdf = PDF()
         pdf.add_page()
         pdf.print_account_info(details['name'], details['acc_no'])
         pdf.print_transaction_table(transactions)
         
-        # PDF ফাইলটি ব্রাউজারে দেখানোর জন্য প্রস্তুত করুন
-        pdf_bytes = pdf.output(dest='B')
+        
+        pdf_bytes = pdf.output(dest='S').encode('latin1')
         response = make_response(pdf_bytes)
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'inline; filename=transactions_{acc_no}.pdf'
-        
         return response
+
 
     except Exception as e:
         flash(f"An error occurred while generating PDF: {e}", 'danger')
