@@ -6,38 +6,90 @@
     <div class="card-header">
         <h3>Create New Account</h3>
     </div>
-    <form action="{{ url_for('create_account') }}" method="POST" class="account-form">
+
+    <!-- ✅ Add onsubmit to trigger JS validation -->
+    <form action="{{ url_for('create_account') }}" method="POST" class="account-form" onsubmit="return validateForm()">
         <div class="form-group">
             <label for="name">Account Holder Name:</label>
             <input type="text" id="name" name="name" required>
         </div>
-        <div class="form-group">
-            <label for="acc_no">Account Number:</label>
-            <input type="text" id="acc_no" name="acc_no" required>
-        </div>
+
+    <div class="form-group">
+    <label for="acc_no">Account Number:</label>
+    <input 
+        type="text" 
+        id="acc_no" 
+        name="acc_no" 
+        pattern="^[0-9]+$" 
+        title="❌ Account number must contain digits only (0–9)" 
+        oninput="this.setCustomValidity(''); if(!this.checkValidity()){ this.setCustomValidity('Only digits (0–9) are allowed.'); }"
+        required>
+</div>
+
+
+
+
         <div class="form-group">
             <label for="balance">Opening Balance:</label>
             <input type="number" id="balance" name="balance" step="0.01" required>
         </div>
-        <div class="form-group">
-            <label for="aadhar_no">Aadhaar Number:</label>
-            <input type="text" id="aadhar_no" name="aadhar_no" required>
-        </div>
+
+    <div class="form-group">
+    <label for="aadhar_no">Aadhaar Number:</label>
+    <input 
+        type="text" 
+        id="aadhar_no" 
+        name="aadhar_no" 
+        pattern="^[0-9]{12}$" 
+        maxlength="12"
+        title="Aadhaar number must contain exactly 12 digits!" 
+        oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+        required>
+    </div>
+
         <div class="form-group">
             <label for="mail_id">Mail ID:</label>
             <input type="email" id="mail_id" name="mail_id" required>
         </div>
+
         <div class="form-group">
             <label for="dob">Date of Birth (DOB):</label>
             <input type="text" id="dob" name="dob" placeholder="DD-MM-YYYY" required>
         </div>
+
         <div class="form-group">
             <label for="address">Address:</label>
             <input type="text" id="address" name="address" required>
         </div>
+
         <div class="form-group">
             <button type="submit" class="cta-button">Create Account</button>
         </div>
     </form>
 </section>
+
+<!-- ✅ JavaScript validation section -->
+<script>
+function validateForm() {
+    const email = document.getElementById("mail_id").value.trim();
+    const accNo = document.getElementById("acc_no").value.trim();
+
+    // ✅ Email validation pattern
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert("❌ Please enter a valid email address!");
+        return false;
+    }
+
+    // ✅ Account number validation: must be 6–12 digits
+    const accPattern = /^\d{6,12}$/;
+    if (!accPattern.test(accNo)) {
+        alert("❌ Account number must contain only digits (6–12 numbers)!");
+        return false;
+    }
+
+    return true; // ✅ Allow form submission if all valid
+}
+</script>
+
 {% endblock %}
