@@ -1,4 +1,6 @@
 import os
+import os
+import re # <-- এই নতুন লাইনটি যোগ করুন
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment
@@ -11,6 +13,29 @@ if not os.path.exists(ADMIN_LOGS):
 
 if not os.path.exists(BANKING_ACCOUNT):
     os.makedirs(BANKING_ACCOUNT)
+
+BASE_ACCOUNT_NUMBER = 10001 # অ্যাকাউন্ট নম্বর এখান থেকে শুরু হবে
+
+def generate_new_account_number():
+    """একটি নতুন এবং ইউনিক অ্যাকাউন্ট নম্বর জেনারেট করে।"""
+    if not os.path.exists(BANKING_ACCOUNT):
+        os.makedirs(BANKING_ACCOUNT)
+        return BASE_ACCOUNT_NUMBER
+    
+    files = os.listdir(BANKING_ACCOUNT)
+    account_numbers = []
+    
+    for f in files:
+        # "Account__10001.xlsx" থেকে 10001 নম্বরটি খুঁজে বের করে
+        match = re.match(r"Account__(\d+)\.xlsx", f)
+        if match:
+            account_numbers.append(int(match.group(1)))
+            
+    if not account_numbers:
+        return BASE_ACCOUNT_NUMBER
+        
+    # সর্বোচ্চ অ্যাকাউন্ট নম্বরের সাথে ১ যোগ করে নতুন নম্বর তৈরি করে
+    return max(account_numbers) + 1
 
 # ---------------------------------------------------
 # --- অ্যাকাউন্ট সংক্রান্ত ফাংশন ---
@@ -49,10 +74,15 @@ def save_transaction(file_path, t_type, amount, new_balance):
     wb.close()
 
 # --- নতুন অ্যাকাউন্ট তৈরি (সঠিক করা) ---
-def create_new_account(acc_no, name, balance, aadhar_no, mail_id, dob, address):
+def create_new_account(name, balance, aadhar_no, mail_id, dob, address):
+    # --- !! পরিবর্তন !! ---
+    # ফাংশনটি এখন নিজেই নতুন অ্যাকাউন্ট নম্বর জেনারেট করছে
+    acc_no = str(generate_new_account_number())
     file_path = GetAccount(acc_no)
+    
+    # এটি একটি সেফটি চেক, যদিও generate_new... ফাংশনটি ইউনিক নম্বরই দেবে
     if os.path.exists(file_path):
-        print("Account already exists!")
+        print(f"Account number generation conflict for {acc_no}!")
         return False
 
     wb = Workbook()
